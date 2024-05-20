@@ -9,6 +9,16 @@ import { MinecraftPacketIds } from "bdsx/bds/packetids";
 const cpsMap = new Map<string, number>();
 
 
+export function getCps(pl: Player): number {
+  return cpsMap.get(pl.getXuid()) ?? 0;
+}
+
+export function setCps(pl: Player, cps: number): void {
+  cpsMap.set(pl.getXuid(), cps);
+}
+
+
+
 events.packetSend(MinecraftPacketIds.LevelSoundEvent).on((pk, ni) => {
   if (pk.sound === 42) {
     const pl = ni.getActor();
@@ -30,7 +40,7 @@ events.packetBefore(MinecraftPacketIds.InventoryTransaction).on((pk, ni) => {
 
 function addAndSendCps(pl: Player) {
   const xuid = pl.getXuid();
-  let cps = cpsMap.get(xuid) ?? 0;
+  let cps = getCps(pl);
   cps++;
 
   cpsMap.set(xuid, cps);
